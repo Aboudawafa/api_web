@@ -1,9 +1,10 @@
+'use strict'
 
 module.exports = {
 client: 'mysql',
 connection: {
     host     : 'localhost',
-    user     : 'syrine',
+    user     : 'root',
     password : 'root',
     database : 'faculte',
 }

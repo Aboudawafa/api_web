@@ -27,7 +27,8 @@ router.route('/')
   .post(function (req, res) {
     Niveau.forge({
       "description":req.body.description,
-      "id_specialite":req.body.id_specialite,
+      "libelle":req.body.libelle,
+      "specialite":req.body.specialite,
       
     })
     .save()
@@ -62,7 +63,8 @@ router.route('/:id')
     .then(function (niveau) {
       niveau.save({
         "description":req.body.description || niveau.get('description'),
-        "id_specialite":req.body.id_specialite || niveau.get('id_specialite'),
+        "libelle":req.body.description || niveau.get('libelle'),
+        "specialite":req.body.id_specialite || niveau.get('specialite'),
        
       })
       .then(function () {

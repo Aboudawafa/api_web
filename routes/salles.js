@@ -23,12 +23,12 @@ router.route('/')
       res.status(500).json({error: true, data: {message: err.message}});
     });
   })
-  // create a user
+
   .post(function (req, res) {
     Salle.forge({
       "nom_salle":req.body.nom_salle,
-      "etage_salle":req.body.etage_salle,
-      
+      "numero":req.body.numero,
+      "type":req.body.type,
     })
     .save()
     .then(function (user) {
@@ -62,7 +62,8 @@ router.route('/:id')
     .then(function (salle) {
       salle.save({
         "nom_salle":req.body.nom_salle || salle.get('nom_salle'),
-        "etage_salle":req.body.etage_salle || salle.get('etage_salle'),
+        "numero":req.body.numero || salle.get('numero'),
+        "type":req.body.type || salle.get('type'),
         
        
       })

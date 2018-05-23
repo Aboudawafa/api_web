@@ -1,19 +1,25 @@
+'use strict'
 var express = require('express');
 var router = express.Router();
 const bookshelf = require('../config/bookshelf-instance');
 const securityConfig = require('../config/security-config');
 var Seance = require('../models/seance');
-var Classe = require('../models/classe')
-var Matiere=require('../models/matiere')
+var Classe = require('../models/classe');
+var Matiere=require('../models/matiere');
+var Salle=require('../models/salle');
+var Annee=require('../models/annee');
+var Enseignant=require('../models/enseignant');
 
 
 var Seances = bookshelf.Collection.extend({
   model: Seance
 });
 
+
 router.route('/')
   // fetch all users
   .get(function (req,res) {
+    console.log(req);
     Seances.forge()
       .fetch()
       .then(function (collection) {
@@ -22,6 +28,17 @@ router.route('/')
         collection.toJSON().forEach((element, idx) => {
           result.push(element);
 
+          Enseignant.forge({id: element.id_enseignant})
+          .fetch()
+          .then(function (enseignant) {
+            if (!enseignant) {
+              result[idx].enseignant = {}
+            }
+            else {
+              result[idx].enseignant = enseignant.toJSON();
+                console.log(result);
+            }
+
           Classe.forge({
               id: element.id_classe
             })
@@ -29,20 +46,68 @@ router.route('/')
             .then(function (classe) {
               if (!classe) {
                 result[idx].classe = {}
-                counter = counter + 1;
               } else {
                 //console.log(classe.toJSON());
                 result[idx].classe = classe.toJSON();
                 console.log(result);
-                counter = counter + 1;
               }
-              if (counter === collection.toJSON().length) {
-                res.json({
-                  error: false,
-                  data: result
-                });
-               }
+              
+               Matiere.forge({id: element.id_matier})
+               .fetch()
+               .then(function (matiere) {
+                 if (!matiere) {
+                   result[idx].matiere = {}
+                 }
+                 else {
+                   result[idx].matiere = matiere.toJSON();
+                   console.log(result);
+              
+                 }
+                 Annee.forge({id: element.id_annee})
+               .fetch()
+               .then(function (annee) {
+                 if (!annee) {
+                   result[idx].annee = {}
+                 }
+                 else {
+                   result[idx].annee = annee.toJSON();
+                   console.log(result);
+                 }
+
+                 Salle.forge({id: element.id_classe})
+                 .fetch()
+                 .then(function (salle) {
+                   if (!salle) {
+                     result[idx].salle = {}
+                       counter = counter + 1;
+                   }
+                   else {
+                     result[idx].salle = salle.toJSON();
+                     console.log(result);
+                     counter = counter + 1;
+                   }
+
+                 
+                 if (counter === collection.toJSON().length) {
+                   res.json({
+                     error: false,
+                     data: result
+                   });
+                  }
                
+                })
+              
+               .catch(function (err) {
+                 res.status(500).json({error: true, data: {message: err.message}});
+               });
+
+
+
+              })
+
+              })
+   
+              }) 
             })
             .catch(function (err) {
               res.status(500).json({
@@ -55,34 +120,9 @@ router.route('/')
 
 
 
-            Matiere.forge({id: element.id_matier})
-            .fetch()
-            .then(function (matiere) {
-              if (!matiere) {
-                result[idx].matiere = {}
-                  counter = counter + 1;
-              }
-              else {
-                result[idx].matiere = matiere.toJSON();
-                console.log(result);
-                counter = counter + 1;
-              }
-              if (counter === collection.toJSON().length) {
-                res.json({
-                  error: false,
-                  data: result
-                });
-               }
-            })
-            .catch(function (err) {
-              res.status(500).json({error: true, data: {message: err.message}});
-            });
-
 
             //console.log(result[idx])
         });
-        
-        console.log(counter);
       
 
       })
@@ -98,13 +138,16 @@ router.route('/')
   })
   // create a user
   .post(function (req, res) {
+    console.log(req);
     Seance.forge({
         "date_debut": req.body.date_debut,
         "date_fin": req.body.date_fin,
-        "id_classe": req.body.id_classe,
-        "id_matier": req.body.id_matier,
-        "id_salle": req.body.id_salle,
-        "id_annee": req.body.id_annee,
+        "id_classe": req.body.classe,
+        "id_matier": req.body.matiere,
+        "id_salle": req.body.salle,
+        "id_annee": req.body.annee,
+        "id_enseignant": req.body.enseignant,
+        "jour": req.body.jour
 
       })
       .save()
@@ -170,7 +213,8 @@ router.route('/:id')
             "id_matier": req.body.id_matier || seance.get('id_matier'),
             "id_salle": req.body.id_salle || seance.get('id_salle'),
             "id_annee": req.body.id_annee || seance.get('id_annee'),
-
+            "id_enseignant": req.body.id_annee || seance.get('id_enseignant'),
+            "jour": req.body.id_annee || seance.get('jour'),
           })
           .then(function () {
             res.json({

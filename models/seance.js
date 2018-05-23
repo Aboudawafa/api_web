@@ -7,6 +7,7 @@ var Classe=require('./classe');
 var Matiere=require('./matiere');
 var Salle=require('./salle');
 var Annee=require('./annee');
+var Enseignant=require('./enseignant');
 
 module.exports =bookshelf.Model.extend({
     tableName:'seance',
@@ -27,4 +28,7 @@ module.exports =bookshelf.Model.extend({
    annee: function () {
     return this.belongsTo(Annee,'id_annee');
   },
+  enseignant : function(){
+    return this.belongsTo(Enseignant,'id_enseignant');
+  }
   })
