@@ -10,7 +10,7 @@ var Noteinfos = bookshelf.Collection.extend({
 });
 
 router.route('/')
-// fetch all users
+// fetch all 
   .get(function (req, res) {
       Noteinfos.forge()
     .fetch()
@@ -24,7 +24,46 @@ router.route('/')
       res.status(500).json({error: true, data: {message: err.message}});
     });
   })
-  // create a user
+/////////////////////////////////////////////////
+  router.route('/allnotifnotread')
+  .get(function (req, res) {
+    console.logS
+    Noteinfos.query(function (qb) {
+  
+    qb.where('read_notification',req.params.read_notification )
+          }).fetch()
+      .then(function (collection) {
+        res.json({error: false, data: collection.toJSON()});
+        console.log(true)
+  
+      })
+      .catch(function (err) {
+        console.log(err)
+        res.status(500).json({error: true, data: {message: err.message}});
+      });
+    })
+  /////////////////////////////////
+
+
+
+  router.route('/countnotifnotread')
+  .get(function (req, res) {
+    console.logS
+    Noteinfos.query(function (qb) {
+      qb.count('*');
+    qb.where('read_notification',req.params.read_notification )
+          }).fetch()
+      .then(function (collection) {
+        res.json({error: false, data: collection.toJSON()});
+        console.log(true)
+  
+      })
+      .catch(function (err) {
+        console.log(err)
+        res.status(500).json({error: true, data: {message: err.message}});
+      });
+    })
+    /////////////
   .post(function (req, res) {
       
     Noteinfo.forge({
@@ -32,6 +71,7 @@ router.route('/')
       "description":req.body.description,
       "date":req.body.date,
       "id_admin":req.body.id_admin,
+      "read_notification":req.body.read_notification,
       
       
     })
@@ -69,6 +109,7 @@ router.route('/:id')
         "titre":req.body.titre || Noteinfo.get('titre'),
         "description":req.body.description || Noteinfo.get('description'),
         "date":req.body.date || Noteinfo.get('date'),
+        "read_notification":req.body.read_notification || Noteinfo.get('read_notification'),
         "id_admin":req.body.id_admin || Noteinfo.get('id_admin')
        
       })

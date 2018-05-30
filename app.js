@@ -89,7 +89,8 @@ app.use('/unites',Unites);
 app.use('/matieres',Matieres);
 app.use('/api/uploads',express.static('uploads'));
 app.use('/api/photoEtudiant',express.static('photoEtudiant'));
-
+app.use('/noteinfo/allnotifnotread',Noteinfos);
+app.use('/noteinfo/countnotifnotread',Noteinfos);
 
 
 // catch 404 and forward to error handler

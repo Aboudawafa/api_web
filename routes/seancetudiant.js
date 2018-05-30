@@ -19,14 +19,6 @@ var Matieres = bookshelf.Collection.extend({
 });
 
 
-
-
-
-
-
-
-
-
 router.route('/seance/:id')
 .get(function (req, res) {
 Seances.query(function (qb) {

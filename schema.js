@@ -120,7 +120,7 @@ noteinfo:{
     titre:{type:'string'},
     description:{type:'string'},
     date:{type:'date'},
-
+    read_notification:{type :'integer'}
 }
  };
  module.exports = Schema;
